@@ -1,8 +1,8 @@
-import { type Plugin, build } from 'vite'
+import { type PluginOption, build } from 'vite'
 import { generateCfg } from './utils'
 import type { OptionsType } from './types'
 
-export default function utools(options: OptionsType | OptionsType[]): Plugin[] {
+export default function utools(options: OptionsType | OptionsType[]): PluginOption[] {
   const optionsArr = Array.isArray(options) ? options : [options]
   return [{
     name: 'vite-plugin-utools',
