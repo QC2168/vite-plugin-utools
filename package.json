@@ -1,5 +1,5 @@
 {
-  "name": "vite-plugin-utools",
+  "name": "@qc2168/vite-plugin-utools",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@8.10.2",
