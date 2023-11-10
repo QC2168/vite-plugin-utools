@@ -1,7 +1,7 @@
 import { unlink } from 'node:fs/promises'
 import { isAbsolute, join, resolve as resolvePath } from 'node:path'
 import { createGzip } from 'node:zlib'
-import { createReadStream, createWriteStream, emptyDirSync, readFileSync } from 'fs-extra'
+import { createReadStream, createWriteStream, ensureDirSync, readFileSync } from 'fs-extra'
 import { createPackage } from '@electron/asar'
 import colors from 'picocolors'
 import { createLogger } from 'vite'
@@ -67,7 +67,7 @@ export async function buildUpx(option: UpxBuildType) {
 
   try {
     const actualOutDir = outDir ?? defaultOutDir
-    emptyDirSync(actualOutDir)
+    ensureDirSync(actualOutDir)
 
     const packageFullPath = join(actualOutDir, packageName)
     await buildPkg(entry ?? defaultEntry, packageFullPath)
