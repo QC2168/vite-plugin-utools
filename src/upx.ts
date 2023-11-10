@@ -52,7 +52,7 @@ const TEMPORARY_DEST = resolvePath(cwd, `./.utools_${Math.random()}`)
 
 async function buildPkg(entry: string, output: string) {
   await createPackage(entry, TEMPORARY_DEST)
-  const checkPkgName = output.endsWith('.upx') ? `${output}.upx` : output
+  const checkPkgName = !output.endsWith('.upx') ? `${output}.upx` : output
   await new Promise((resolve, reject) => createReadStream(TEMPORARY_DEST)
     .pipe(createGzip())
     .pipe(createWriteStream(checkPkgName))
