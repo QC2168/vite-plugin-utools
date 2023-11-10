@@ -12,7 +12,14 @@ export interface BuildFileType {
   vite?: InlineConfig
 }
 
+export interface BuildJsonType {
+  outdir?: string
+  entry: string
+  address: string
+}
+
 export interface OptionsType {
   entry: string | string[] | BuildFileType | BuildFileType[]
   upx?: UpxBuildType
+  pluginJsonPath?: string
 }
