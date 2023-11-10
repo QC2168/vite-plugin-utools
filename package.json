@@ -1,7 +1,7 @@
 {
   "name": "@qc2168/vite-plugin-utools",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "packageManager": "pnpm@8.10.2",
   "description": "quickly building utools files",
   "author": "QC2168",
