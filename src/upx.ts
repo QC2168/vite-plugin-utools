@@ -40,14 +40,6 @@ function replacePlaceholders(template: string, data: { [key: string]: string }):
   return template
 }
 
-// function generatePackageName(raw: string, pluginOptions: PluginOptions) {
-//   return temp.replace(raw, (str, key: keyof PluginOptions) => {
-//     const value = pluginOptions[key]
-
-//     return isString(value) ? value : str
-//   })
-// }
-
 const TEMPORARY_DEST = resolvePath(cwd, `./.utools_${Math.random()}`)
 
 async function buildPkg(entry: string, output: string) {
