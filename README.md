@@ -15,7 +15,7 @@ In the vite config file, add the vite-plugin-utools
 ```typescript
 // vite.config.ts
   plugins: [
-    utools([ { entry: './utools/main.js' }])
+    utools({ entry: ['./utools/main.js'] })
   ]
 ```
 
@@ -36,12 +36,37 @@ window.exports = {
 }
 ```
 
+### Upx Build
+
+By default, upx is not built, if you want to build, you just need to set up the upx object
+
+```typescript
+// vite.config.ts
+  plugins: [
+    utools({ entry: ['./utools/main.js'], upx: {pluginJsonPath:'your plugin.json path'} })
+  ]
+```
+
+
+
 ## Options Type
 
 ```typescript
+export interface UpxBuildType {
+  entry?: string
+  pluginJsonPath: string
+  outDir?: string
+  packageName?: string
+}
+
+export interface BuildFileType {
+  entry: string | string[]
+  vite?: InlineConfig
+}
+
 export interface OptionsType {
-  entry: string
-  vite: InlineConfig
+  entry: string | string[] | BuildFileType | BuildFileType[]
+  upx?: UpxBuildType
 }
 ```
 
