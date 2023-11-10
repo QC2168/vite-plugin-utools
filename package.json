@@ -50,10 +50,16 @@
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks"
   },
+  "dependencies": {
+    "@electron/asar": "^3.2.8",
+    "fs-extra": "^11.1.1",
+    "picocolors": "^1.0.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^1.1.0",
     "@antfu/ni": "^0.21.8",
     "@antfu/utils": "^0.7.6",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.8.10",
     "bumpp": "^9.2.0",
     "eslint": "^8.52.0",

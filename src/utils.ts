@@ -1,7 +1,7 @@
 import { builtinModules } from 'node:module'
 import type { InlineConfig } from 'vite'
 import { mergeConfig } from 'vite'
-import type { OptionsType } from './types'
+import type { BuildFileType } from './types'
 
 export function withExternalBuiltins(config: InlineConfig) {
   const builtins = builtinModules.filter(e => !e.startsWith('_'))
@@ -35,7 +35,7 @@ export function withExternalBuiltins(config: InlineConfig) {
   return config
 }
 
-export function generateCfg({ entry, vite = {} }: OptionsType) {
+export function generateCfg({ entry, vite = {} }: BuildFileType) {
   const defaultCfg = {
     configFile: false,
     build: {
