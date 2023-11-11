@@ -26,7 +26,7 @@ export default function utools(options: OptionsType): Plugin[] {
 
     async buildStart() {
       await buildFile()
-      if (options?.pluginJsonPath) {
+      if (options?.hmr && options?.pluginJsonPath) {
         const address = obtainServerAddress(viteConfig.server)
         injectToJson({ entry: options.pluginJsonPath, outdir: viteConfig.build?.outDir, address })
       }
