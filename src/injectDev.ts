@@ -1,16 +1,50 @@
 import { isAbsolute, join, resolve } from 'node:path'
+import type { AddressInfo } from 'node:net'
 import { ensureDirSync, pathExistsSync, readJsonSync, writeJSONSync } from 'fs-extra'
-import type { UserConfig } from 'vite'
+import type { UserConfig, ViteDevServer } from 'vite'
 import type { BuildJsonType } from './types'
 
 // eslint-disable-next-line node/prefer-global/process
 const cwd = process.cwd()
-export function obtainServerAddress(server: UserConfig['server']) {
-  const { host = null, port = null } = server || {}
-  if (!host || !port)
-    throw new Error('请检查手动提供vite.serve.host和vite.serve.port')
 
-  return `http://${host}:${port}`
+/**
+ * @see https://github.com/vitejs/vite/blob/v4.0.1/packages/vite/src/node/constants.ts#L137-L147
+ */
+export function resolveHostname(hostname: string) {
+  const loopbackHosts = new Set([
+    'localhost',
+    '127.0.0.1',
+    '::1',
+    '0000:0000:0000:0000:0000:0000:0000:0001',
+  ])
+  const wildcardHosts = new Set([
+    '0.0.0.0',
+    '::',
+    '0000:0000:0000:0000:0000:0000:0000:0000',
+  ])
+
+  return loopbackHosts.has(hostname) || wildcardHosts.has(hostname) ? 'localhost' : hostname
+}
+
+export function resolveServerUrl(server: ViteDevServer): string | void {
+  const addressInfo = server.httpServer!.address()
+  const isAddressInfo = (x: any): x is AddressInfo => x?.address
+
+  if (isAddressInfo(addressInfo)) {
+    const { address, port } = addressInfo
+    const hostname = resolveHostname(address)
+
+    const options = server.config.server
+    const protocol = options.https ? 'https' : 'http'
+    const devBase = server.config.base
+
+    const path = typeof options.open === 'string' ? options.open : devBase
+    const url = path.startsWith('http')
+      ? path
+      : `${protocol}://${hostname}:${port}${path}`
+
+    return url
+  }
 }
 
 export function injectToJson({ entry, outdir = 'dist', address }: BuildJsonType) {

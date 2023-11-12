@@ -1,42 +1,40 @@
 import { build } from 'vite'
-import type { InlineConfig, Plugin } from 'vite'
+import type { Plugin } from 'vite'
 import { generateCfg, withExternalBuiltins } from './utils'
 import type { OptionsType } from './types'
 import buildUpx from './upx'
-import { injectToJson, obtainServerAddress } from './injectDev'
+import { injectToJson, resolveServerUrl } from './injectDev'
 
 export default function utools(options: OptionsType): Plugin[] {
   const buildFileOptionsArr = Array.isArray(options.entry) ? options.entry : [options.entry]
-  const buildFile = async () => {
-    for await (const options of buildFileOptionsArr) {
-      if (typeof options === 'string')
-        await build(withExternalBuiltins(generateCfg({ entry: options })))
-      else
-        await build(withExternalBuiltins(generateCfg(options)))
-    }
-  }
-
-  let viteConfig: InlineConfig = {}
   return [{
     name: 'vite-plugin-utools',
     apply: 'serve',
-    config(cfg) {
-      viteConfig = cfg
-    },
+    configureServer(server) {
+      server.httpServer?.once('listening', async () => {
+        for await (const { entry, vite = {} } of buildFileOptionsArr) {
+          vite.build ??= {}
+          // watch only the entry file
+          vite.build.watch = {
+            include: entry,
+          }
+          await build(withExternalBuiltins(generateCfg({ entry, vite })))
+        }
 
-    async buildStart() {
-      await buildFile()
-      if (options?.hmr && options?.pluginJsonPath) {
-        const address = obtainServerAddress(viteConfig.server)
-        injectToJson({ entry: options.pluginJsonPath, outdir: viteConfig.build?.outDir, address })
-      }
+        if (options?.hmr && options?.hmr.pluginJsonPath) {
+          const pluginJsonPath = options.hmr.pluginJsonPath
+          const address = resolveServerUrl(server)
+          address && injectToJson({ entry: pluginJsonPath, outdir: server.config.build?.outDir, address })
+        }
+      })
     },
 
   }, {
     name: 'vite-plugin-utools',
     apply: 'build',
-    closeBundle() {
-      buildFile()
+    async closeBundle() {
+      for await (const { entry, vite } of buildFileOptionsArr)
+        await build(withExternalBuiltins(generateCfg({ entry, vite })))
       if (options?.upx)
         buildUpx(options.upx)
     },
