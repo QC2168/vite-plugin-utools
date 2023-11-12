@@ -6,7 +6,8 @@ import buildUpx from './upx'
 import { injectToJson, resolveServerUrl } from './injectDev'
 
 export default function utools(options: OptionsType): Plugin[] {
-  const buildFileOptionsArr = Array.isArray(options.entry) ? options.entry : [options.entry]
+  const { entry, hmr = false } = options
+  const buildFileOptionsArr = Array.isArray(entry) ? entry : [entry]
   return [{
     name: 'vite-plugin-utools',
     apply: 'serve',
@@ -21,8 +22,8 @@ export default function utools(options: OptionsType): Plugin[] {
           await build(withExternalBuiltins(generateCfg({ entry, vite })))
         }
 
-        if (options?.hmr && options?.hmr.pluginJsonPath) {
-          const pluginJsonPath = options.hmr.pluginJsonPath
+        if (hmr && hmr.pluginJsonPath) {
+          const pluginJsonPath = hmr.pluginJsonPath
           const address = resolveServerUrl(server)
           address && injectToJson({ entry: pluginJsonPath, outdir: server.config.build?.outDir, address })
         }
