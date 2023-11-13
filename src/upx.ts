@@ -1,7 +1,7 @@
 import { unlink } from 'node:fs/promises'
-import { isAbsolute, join, resolve as resolvePath } from 'node:path'
+import { basename, isAbsolute, join, resolve as resolvePath } from 'node:path'
 import { createGzip } from 'node:zlib'
-import { createReadStream, createWriteStream, ensureDirSync, readFileSync } from 'fs-extra'
+import { copySync, createReadStream, createWriteStream, ensureDirSync, readFileSync } from 'fs-extra'
 import { createPackage } from '@electron/asar'
 import colors from 'picocolors'
 import { createLogger } from 'vite'
@@ -62,6 +62,9 @@ export async function buildUpx(option: UpxBuildType) {
   const pluginFileObj = validatePluginField(pluginJsonPath)
 
   const packageName = replacePlaceholders(optionPackageName ?? defaultPackageName, pluginFileObj)
+  const buildEntry = entry ?? defaultEntry
+  // copy plugin.json to entry
+  copySync(pluginJsonPath, join(buildEntry, basename(pluginJsonPath)))
 
   logger.info(colors.green('\n正在构建upx包....'))
 
@@ -70,7 +73,7 @@ export async function buildUpx(option: UpxBuildType) {
     ensureDirSync(actualOutDir)
 
     const packageFullPath = join(actualOutDir, packageName)
-    await buildPkg(entry ?? defaultEntry, packageFullPath)
+    await buildPkg(buildEntry, packageFullPath)
 
     logger.info(`${colors.green('✓')} 构建成功`)
     logger.info(colors.blue(packageFullPath))
