@@ -47,7 +47,16 @@ By default, upx is not built, if you want to build, you just need to set up the 
   ]
 ```
 
+### HMR Inject
 
+You can using auto inject `development.main`, to achieve hot updates
+
+```typescript
+utools({
+  hmr: {
+    pluginJsonPath: 'your plugin.json path'
+  }})
+```
 
 ## Options Type
 
