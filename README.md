@@ -43,7 +43,10 @@ By default, upx is not built, if you want to build, you just need to set up the 
 ```typescript
 // vite.config.ts
   plugins: [
-    utools({ entry: ['./utools/main.js'], upx: {pluginJsonPath:'your plugin.json path'} })
+    utools({
+      entry: ['./utools/main.js'],
+      upx: {pluginJsonPath:'your plugin.json path'}
+    })
   ]
 ```
 
