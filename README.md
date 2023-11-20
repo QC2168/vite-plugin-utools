@@ -52,21 +52,24 @@ By default, upx is not built, if you want to build, you just need to set up the 
 ## Options Type
 
 ```typescript
-export interface UpxBuildType {
-  entry?: string
-  pluginJsonPath: string
-  outDir?: string
-  packageName?: string
+interface UpxBuildType {
+    entry?: string;
+    pluginJsonPath: string;
+    outDir?: string;
+    packageName?: string;
 }
 
-export interface BuildFileType {
-  entry: string | string[]
-  vite?: InlineConfig
+interface BuildFileType {
+    entry: string | string[];
+    vite?: InlineConfig;
 }
 
-export interface OptionsType {
-  entry: string | string[] | BuildFileType | BuildFileType[]
-  upx?: UpxBuildType
+interface OptionsType {
+    entry: BuildFileType | BuildFileType[];
+    upx?: false | UpxBuildType;
+    hmr?: false | {
+        pluginJsonPath?: string;
+    };
 }
 ```
 
