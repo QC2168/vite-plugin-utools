@@ -15,7 +15,10 @@ In the vite config file, add the vite-plugin-utools
 ```typescript
 // vite.config.ts
   plugins: [
-    utools({ entry: ['./utools/main.js'] })
+    utools({ entry: [
+      { entry: 'utools/main.ts' },
+      { entry: 'utools/preload.ts' }
+    ] })
   ]
 ```
 
