@@ -5,6 +5,8 @@ import type { OptionsType } from './types'
 import buildUpx from './upx'
 import { injectToJson, resolveServerUrl } from './injectDev'
 
+export { install } from './install'
+
 export default function utools(options: OptionsType): Plugin[] {
   const { entry, hmr = false } = options
   const buildFileOptionsArr = Array.isArray(entry) ? entry : [entry]
@@ -34,8 +36,8 @@ export default function utools(options: OptionsType): Plugin[] {
     name: 'vite-plugin-utools',
     apply: 'build',
     async closeBundle() {
-      for await (const { entry, vite } of buildFileOptionsArr)
-        await build(withExternalBuiltins(generateCfg({ entry, vite })))
+      for await (const { entry, vite, mode } of buildFileOptionsArr)
+        await build(withExternalBuiltins(generateCfg({ entry, vite }), mode))
       if (options?.upx)
         buildUpx(options.upx)
     },

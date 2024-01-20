@@ -1,12 +1,17 @@
 import { builtinModules } from 'node:module'
 import type { InlineConfig } from 'vite'
 import { mergeConfig } from 'vite'
+import { existsSync, readJSONSync } from 'fs-extra'
+import { BuildMode } from './types'
 import type { BuildFileType } from './types'
 
-export function withExternalBuiltins(config: InlineConfig) {
+export function withExternalBuiltins(config: InlineConfig, mode = BuildMode.IncludeDependencies) {
   const builtins = builtinModules.filter(e => !e.startsWith('_'))
   builtins.push('electron', ...builtins.map(m => `node:${m}`))
-
+  if (existsSync('./package.json') && mode === BuildMode.ExcludeDependencies) {
+    const pkg = readJSONSync('./package.json')
+    builtins.push(...Object.keys(pkg.dependencies))
+  }
   config.build ??= {}
   config.build.rollupOptions ??= {}
 
