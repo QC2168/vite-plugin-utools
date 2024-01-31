@@ -1,8 +1,9 @@
+import { builtinModules } from 'node:module'
 import parser from '@babel/parser'
 import traverse from '@babel/traverse'
 import { readFileSync } from 'fs-extra'
 
-export default function getDependencies(filePath = './dist/preload.js') {
+export default function getDependencies(filePath: string) {
   const code = readFileSync(filePath, 'utf-8')
   const ast = parser.parse(code, {
     sourceType: 'module',
@@ -27,5 +28,6 @@ export default function getDependencies(filePath = './dist/preload.js') {
         packageNames.push(path.node.arguments[0].value)
     },
   })
-  return packageNames
+  // 过滤electron，node内置库
+  return packageNames.filter(pkg => !builtinModules.includes(pkg) && !pkg.startsWith('node:') && pkg !== 'electron')
 }

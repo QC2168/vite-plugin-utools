@@ -5,6 +5,7 @@ import type { OptionsType } from './types'
 import buildUpx from './upx'
 import { injectToJson, resolveServerUrl } from './injectDev'
 
+export * from './types'
 export { install } from './install'
 
 export default function utools(options: OptionsType): Plugin[] {
