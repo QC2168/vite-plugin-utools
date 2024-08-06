@@ -1,10 +1,11 @@
 import { builtinModules } from 'node:module'
 import type { InlineConfig } from 'vite'
 import { mergeConfig } from 'vite'
-import { existsSync, readJSONSync } from 'fs-extra'
+import fs from 'fs-extra'
 import { BuildMode } from './types'
 import type { BuildFileType } from './types'
 
+const { existsSync, readJSONSync } = fs
 export function withExternalBuiltins(config: InlineConfig, mode = BuildMode.IncludeDependencies) {
   const builtins = builtinModules.filter(e => !e.startsWith('_'))
   builtins.push('electron', ...builtins.map(m => `node:${m}`))

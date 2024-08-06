@@ -1,12 +1,13 @@
 import { unlink } from 'node:fs/promises'
 import { basename, isAbsolute, join, resolve as resolvePath } from 'node:path'
 import { createGzip } from 'node:zlib'
-import { copySync, createReadStream, createWriteStream, ensureDirSync, readFileSync } from 'fs-extra'
+import fs from 'fs-extra'
 import { createPackage } from '@electron/asar'
 import colors from 'picocolors'
 import { createLogger } from 'vite'
 import type { UpxBuildType } from './types'
 
+const { copySync, createReadStream, createWriteStream, ensureDirSync, readFileSync } = fs
 const logger = createLogger()
 // eslint-disable-next-line node/prefer-global/process
 const cwd = process.cwd()

@@ -1,10 +1,10 @@
 import { builtinModules } from 'node:module'
 import parser from '@babel/parser'
 import traverse from '@babel/traverse'
-import { readFileSync } from 'fs-extra'
+import fs from 'fs-extra'
 
 export default function getDependencies(filePath: string) {
-  const code = readFileSync(filePath, 'utf-8')
+  const code = fs.readFileSync(filePath, 'utf-8')
   const ast = parser.parse(code, {
     sourceType: 'module',
     plugins: ['jsx', 'typescript'],

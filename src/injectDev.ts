@@ -1,8 +1,10 @@
 import { isAbsolute, join, resolve } from 'node:path'
 import type { AddressInfo } from 'node:net'
-import { ensureDirSync, pathExistsSync, readJsonSync, writeJSONSync } from 'fs-extra'
+import fs from 'fs-extra'
 import type { UserConfig, ViteDevServer } from 'vite'
 import type { BuildJsonType } from './types'
+
+const { ensureDirSync, pathExistsSync, readJsonSync, writeJSONSync } = fs
 
 // eslint-disable-next-line node/prefer-global/process
 const cwd = process.cwd()
