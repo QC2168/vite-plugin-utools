@@ -41,6 +41,8 @@ window.exports = {
 
 ### Upx Build
 
+> ⚠️ **upx is deprecated  Not recommended**
+
 By default, upx is not built, if you want to build, you just need to set up the upx object
 
 ```typescript
