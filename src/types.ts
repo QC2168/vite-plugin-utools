@@ -1,12 +1,6 @@
 import type { InlineConfig } from 'vite'
 
 export enum BuildMode { IncludeDependencies, ExcludeDependencies }
-export interface UpxBuildType {
-  entry?: string
-  pluginJsonPath: string
-  outDir?: string
-  packageName?: string
-}
 
 export interface BuildFileType {
   entry: string | string[]
@@ -22,6 +16,5 @@ export interface BuildJsonType {
 
 export interface OptionsType {
   entry: BuildFileType | BuildFileType[]
-  upx?: false | UpxBuildType
   hmr?: boolean | { pluginJsonPath?: string }
 }
