@@ -3,6 +3,7 @@ import type { ViteDevServer } from 'vite'
 import type { BuildJsonType } from './types'
 import { isAbsolute, join, resolve } from 'node:path'
 import fs from 'fs-extra'
+import JSON5 from 'json5'
 
 const { ensureDirSync, pathExistsSync, readJsonSync, writeJSONSync } = fs
 
@@ -50,16 +51,41 @@ export function resolveServerUrl(server: ViteDevServer): string | void {
 }
 
 export function injectToJson({ entry, outdir = 'dist', address }: BuildJsonType) {
-  if (!pathExistsSync(entry))
-    throw new Error(`plugin.json不存在，请检查${entry}`)
+  // check entry path
+  const entryPath = isAbsolute(entry) ? entry : resolve(cwd, entry)
 
+  // check file exists
+  if (!pathExistsSync(entryPath)) {
+    throw new Error(`找不到配置文件，请检查 ${entry}`)
+  }
+
+  // ensure outdir exists
   ensureDirSync(outdir)
 
-  const requirePath = isAbsolute(entry) ? entry : resolve(cwd, entry)
+  let pluginJSONValue: any
 
-  const pluginValue = readJsonSync(requirePath, 'utf-8')
-  pluginValue.development = {
-    main: address,
+  try {
+    // check if entry is json5
+    const isJSON5 = entryPath.endsWith('.json5')
+
+    if (isJSON5) {
+      const json5Content = fs.readFileSync(entryPath, 'utf-8')
+      pluginJSONValue = JSON5.parse(json5Content)
+    }
+    else {
+      pluginJSONValue = readJsonSync(entryPath, 'utf-8')
+    }
+
+    // inject development config
+    pluginJSONValue.development = {
+      main: address,
+    }
+
+    // write to outdir
+    const outputPath = join(cwd, outdir, 'plugin.json')
+    writeJSONSync(outputPath, pluginJSONValue, { spaces: 2 })
   }
-  writeJSONSync(join(cwd, outdir, 'plugin.json'), pluginValue)
+  catch (error) {
+    throw new Error(`处理配置文件失败: ${(error as Error).message}`)
+  }
 }

@@ -23,5 +23,5 @@ export interface BuildJsonType {
 export interface OptionsType {
   entry: BuildFileType | BuildFileType[]
   upx?: false | UpxBuildType
-  hmr?: false | { pluginJsonPath?: string }
+  hmr?: boolean | { pluginJsonPath?: string }
 }

@@ -1,12 +1,9 @@
 import type { Plugin, ResolvedConfig } from 'vite'
 import type { OptionsType } from './types'
-import { join } from 'node:path'
-import { cwd } from 'node:process'
-import fs from 'fs-extra'
 import { build } from 'vite'
 import { injectToJson, resolveServerUrl } from './injectDev'
 import buildUpx from './upx'
-import { generateCfg, withExternalBuiltins } from './utils'
+import { generateCfg, getPluginJsonPath, handlePluginJson, withExternalBuiltins } from './utils'
 
 export { install } from './install'
 export * from './types'
@@ -29,14 +26,25 @@ export default function utools(options: OptionsType): Plugin[] {
           await build(withExternalBuiltins(generateCfg({ entry, vite })))
         }
 
-        if (hmr && hmr.pluginJsonPath) {
-          const pluginJsonPath = hmr.pluginJsonPath
-          const address = resolveServerUrl(server)
-          address && injectToJson({ entry: pluginJsonPath, outdir: server.config.build?.outDir, address })
+        if (hmr) {
+          try {
+            const pluginJsonPath = getPluginJsonPath(hmr)
+            const address = resolveServerUrl(server)
+            if (address && pluginJsonPath) {
+              injectToJson({
+                entry: pluginJsonPath,
+                outdir: server.config.build?.outDir,
+                address,
+              })
+            }
+          }
+          catch (error) {
+            console.error(`HMR 配置错误: ${(error as Error).message}`)
+          }
         }
         else {
           // move the plugin.json to dist
-          fs.copyFileSync(join(cwd(), 'plugin.json'), join(cwd(), server.config.build?.outDir ?? 'dist', 'plugin.json'))
+          handlePluginJson(server.config.build?.outDir ?? 'dist')
         }
       })
     },
@@ -50,8 +58,8 @@ export default function utools(options: OptionsType): Plugin[] {
     async closeBundle() {
       for await (const { entry, vite, mode } of buildFileOptionsArr)
         await build(withExternalBuiltins(generateCfg({ entry, vite }), mode))
-
-      fs.copyFileSync(join(cwd(), 'plugin.json'), join(cwd(), config.build?.outDir ?? 'dist', 'plugin.json'))
+      // move plugin.json to dist
+      handlePluginJson(config.build?.outDir ?? 'dist')
       if (options?.upx)
         buildUpx(options.upx)
     },
