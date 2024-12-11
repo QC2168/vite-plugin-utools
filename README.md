@@ -39,22 +39,6 @@ window.exports = {
 }
 ```
 
-### Upx Build
-
-> ⚠️ **upx is deprecated  Not recommended**
-
-By default, upx is not built, if you want to build, you just need to set up the upx object
-
-```typescript
-// vite.config.ts
-plugins: [
-  utools({
-    entry: ['./utools/main.js'],
-    upx: { pluginJsonPath: 'your plugin.json path' }
-  })
-]
-```
-
 ### HMR Inject
 
 You can using auto inject `development.main`, to achieve hot updates
@@ -70,24 +54,25 @@ utools({
 ## Options Type
 
 ```typescript
-interface UpxBuildType {
-  entry?: string
-  pluginJsonPath: string
-  outDir?: string
-  packageName?: string
-}
+import type { InlineConfig } from 'vite'
 
-interface BuildFileType {
+export enum BuildMode { IncludeDependencies, ExcludeDependencies }
+
+export interface BuildFileType {
   entry: string | string[]
   vite?: InlineConfig
+  mode?: BuildMode
 }
 
-interface OptionsType {
+export interface BuildJsonType {
+  outdir?: string
+  entry: string
+  address: string
+}
+
+export interface OptionsType {
   entry: BuildFileType | BuildFileType[]
-  upx?: false | UpxBuildType
-  hmr?: false | {
-    pluginJsonPath?: string
-  }
+  hmr?: boolean | { pluginJsonPath?: string }
 }
 ```
 
