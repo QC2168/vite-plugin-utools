@@ -1,7 +1,10 @@
 import { builtinModules } from 'node:module'
 import parser from '@babel/parser'
-import traverse from '@babel/traverse'
+import _traverse from '@babel/traverse'
 import fs from 'fs-extra'
+// fix: traverse is not a function
+// github issues https://github.com/babel/babel/issues/13855
+const traverse = _traverse.default
 
 export default function getDependencies(filePath: string) {
   const code = fs.readFileSync(filePath, 'utf-8')
@@ -24,8 +27,9 @@ export default function getDependencies(filePath: string) {
         path.node.callee.name === 'require'
         && path.node.arguments.length === 1
         && path.node.arguments[0].type === 'StringLiteral'
-      )
+      ) {
         packageNames.push(path.node.arguments[0].value)
+      }
     },
   })
   // 过滤electron，node内置库
