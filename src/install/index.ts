@@ -20,7 +20,7 @@ export async function install(paths = defaultFilePath, cwd = './dist') {
     logger.info(colors.blue(`总共${uniquePkgs.length}个依赖包`))
     logger.info(colors.blue('正在安装...'))
 
-    await spawn.sync('npm', ['install', ...uniquePkgs], { cwd })
+    await spawn.sync('npm', ['install', '--production', ...uniquePkgs], { cwd })
 
     logger.info(colors.green('安装成功'))
   }
