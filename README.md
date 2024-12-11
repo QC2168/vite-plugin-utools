@@ -14,12 +14,12 @@ In the vite config file, add the vite-plugin-utools
 
 ```typescript
 // vite.config.ts
-  plugins: [
-    utools({ entry: [
-      { entry: 'utools/main.ts' },
-      { entry: 'utools/preload.ts' }
-    ] })
-  ]
+plugins: [
+  utools({ entry: [
+    { entry: 'utools/main.ts' },
+    { entry: 'utools/preload.ts' }
+  ] })
+]
 ```
 
 Create a `main.js` file and pass the file path to plugin
@@ -27,15 +27,15 @@ Create a `main.js` file and pass the file path to plugin
 ```javascript
 // main.js
 window.exports = {
-    // plugin entrance
-    "demo": {
-        mode: "none",
-        args: {
-            enter: async () => {
-                // some things
-            }
-        }
+  // plugin entrance
+  demo: {
+    mode: 'none',
+    args: {
+      enter: async () => {
+        // some things
+      }
     }
+  }
 }
 ```
 
@@ -47,12 +47,12 @@ By default, upx is not built, if you want to build, you just need to set up the 
 
 ```typescript
 // vite.config.ts
-  plugins: [
-    utools({
-      entry: ['./utools/main.js'],
-      upx: {pluginJsonPath:'your plugin.json path'}
-    })
-  ]
+plugins: [
+  utools({
+    entry: ['./utools/main.js'],
+    upx: { pluginJsonPath: 'your plugin.json path' }
+  })
+]
 ```
 
 ### HMR Inject
@@ -63,30 +63,31 @@ You can using auto inject `development.main`, to achieve hot updates
 utools({
   hmr: {
     pluginJsonPath: 'your plugin.json path'
-  }})
+  }
+})
 ```
 
 ## Options Type
 
 ```typescript
 interface UpxBuildType {
-    entry?: string;
-    pluginJsonPath: string;
-    outDir?: string;
-    packageName?: string;
+  entry?: string
+  pluginJsonPath: string
+  outDir?: string
+  packageName?: string
 }
 
 interface BuildFileType {
-    entry: string | string[];
-    vite?: InlineConfig;
+  entry: string | string[]
+  vite?: InlineConfig
 }
 
 interface OptionsType {
-    entry: BuildFileType | BuildFileType[];
-    upx?: false | UpxBuildType;
-    hmr?: false | {
-        pluginJsonPath?: string;
-    };
+  entry: BuildFileType | BuildFileType[]
+  upx?: false | UpxBuildType
+  hmr?: false | {
+    pluginJsonPath?: string
+  }
 }
 ```
 

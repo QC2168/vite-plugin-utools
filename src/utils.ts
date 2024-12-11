@@ -1,9 +1,9 @@
-import { builtinModules } from 'node:module'
 import type { InlineConfig } from 'vite'
-import { mergeConfig } from 'vite'
-import fs from 'fs-extra'
-import { BuildMode } from './types'
 import type { BuildFileType } from './types'
+import { builtinModules } from 'node:module'
+import fs from 'fs-extra'
+import { mergeConfig } from 'vite'
+import { BuildMode } from './types'
 
 const { existsSync, readJSONSync } = fs
 export function withExternalBuiltins(config: InlineConfig, mode = BuildMode.IncludeDependencies) {

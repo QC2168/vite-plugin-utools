@@ -1,11 +1,11 @@
+import type { UpxBuildType } from './types'
 import { unlink } from 'node:fs/promises'
 import { basename, isAbsolute, join, resolve as resolvePath } from 'node:path'
 import { createGzip } from 'node:zlib'
-import fs from 'fs-extra'
 import { createPackage } from '@electron/asar'
+import fs from 'fs-extra'
 import colors from 'picocolors'
 import { createLogger } from 'vite'
-import type { UpxBuildType } from './types'
 
 const { copySync, createReadStream, createWriteStream, ensureDirSync, readFileSync } = fs
 const logger = createLogger()

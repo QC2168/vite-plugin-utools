@@ -1,12 +1,12 @@
-import { build } from 'vite'
 import type { Plugin } from 'vite'
-import { generateCfg, withExternalBuiltins } from './utils'
 import type { OptionsType } from './types'
-import buildUpx from './upx'
+import { build } from 'vite'
 import { injectToJson, resolveServerUrl } from './injectDev'
+import buildUpx from './upx'
+import { generateCfg, withExternalBuiltins } from './utils'
 
-export * from './types'
 export { install } from './install'
+export * from './types'
 
 export default function utools(options: OptionsType): Plugin[] {
   const { entry, hmr = false } = options
