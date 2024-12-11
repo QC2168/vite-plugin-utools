@@ -2,7 +2,6 @@ import type { Plugin, ResolvedConfig } from 'vite'
 import type { OptionsType } from './types'
 import { build } from 'vite'
 import { injectToJson, resolveServerUrl } from './injectDev'
-import buildUpx from './upx'
 import { generateCfg, getPluginJsonPath, handlePluginJson, withExternalBuiltins } from './utils'
 
 export { install } from './install'
@@ -60,8 +59,6 @@ export default function utools(options: OptionsType): Plugin[] {
         await build(withExternalBuiltins(generateCfg({ entry, vite }), mode))
       // move plugin.json to dist
       handlePluginJson(config.build?.outDir ?? 'dist')
-      if (options?.upx)
-        buildUpx(options.upx)
     },
   }]
 }
