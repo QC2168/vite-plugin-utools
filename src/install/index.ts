@@ -18,11 +18,14 @@ export async function install(paths = defaultFilePath, cwd = './dist') {
 
     logger.info(colors.blue(`提取成功:${uniquePkgs.join(',')}`))
     logger.info(colors.blue(`总共${uniquePkgs.length}个依赖包`))
-    logger.info(colors.blue('正在安装...'))
-
-    await spawn.sync('npm', ['install', '--production', ...uniquePkgs], { cwd })
-
-    logger.info(colors.green('安装成功'))
+    if (uniquePkgs.length > 0) {
+      logger.info(colors.blue('正在安装...'))
+      await spawn.sync('npm', ['install', '--production', ...uniquePkgs], { cwd })
+      logger.info(colors.green('安装成功'))
+    }
+    else {
+      logger.info(colors.green('无需安装'))
+    }
   }
   catch (error: any) {
     logger.error(error.message)
