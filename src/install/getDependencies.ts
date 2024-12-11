@@ -4,7 +4,7 @@ import _traverse from '@babel/traverse'
 import fs from 'fs-extra'
 // fix: traverse is not a function
 // github issues https://github.com/babel/babel/issues/13855
-const traverse = _traverse.default
+const traverse = (_traverse as any).default
 
 export default function getDependencies(filePath: string) {
   const code = fs.readFileSync(filePath, 'utf-8')
@@ -16,14 +16,13 @@ export default function getDependencies(filePath: string) {
   const packageNames: string[] = []
 
   traverse(ast, {
-    ImportDeclaration(path) {
+    ImportDeclaration(path: any) {
       const source = path.node.source.value
       packageNames.push(source)
     },
-    CallExpression(path) {
+    CallExpression(path: any) {
       if (
-        // eslint-disable-next-line ts/ban-ts-comment
-        // @ts-expect-error
+
         path.node.callee.name === 'require'
         && path.node.arguments.length === 1
         && path.node.arguments[0].type === 'StringLiteral'
