@@ -14,6 +14,9 @@ export default function utools(options: OptionsType): Plugin[] {
   return [{
     name: 'vite-plugin-utools',
     apply: 'serve',
+    configResolved(cfg: ResolvedConfig) {
+      config = cfg
+    },
     configureServer(server) {
       server.httpServer?.once('listening', async () => {
         for await (const { entry, vite = {} } of buildFileOptionsArr) {
@@ -22,6 +25,8 @@ export default function utools(options: OptionsType): Plugin[] {
           vite.build.watch = {
             include: entry,
           }
+          // specify vite mode
+          vite.mode ||= config.mode
           await build(withExternalBuiltins(generateCfg({ entry, vite })))
         }
 
@@ -55,8 +60,11 @@ export default function utools(options: OptionsType): Plugin[] {
       config = cfg
     },
     async closeBundle() {
-      for await (const { entry, vite, mode } of buildFileOptionsArr)
+      for await (const { entry, vite = {}, mode } of buildFileOptionsArr) {
+        vite.build ??= {}
+        vite.mode ||= config.mode
         await build(withExternalBuiltins(generateCfg({ entry, vite }), mode))
+      }
       // move plugin.json to dist
       handlePluginJson(config.build?.outDir ?? 'dist')
     },
