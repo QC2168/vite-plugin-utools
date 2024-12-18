@@ -17,19 +17,45 @@ function extractContentBasedOnConditions(str: string) {
   return slashIndex === -1 ? str : str.substring(0, slashIndex)
 }
 
-export default function getDependencies(filePath: string) {
+export interface GetDependenciesOptions {
+  deps?: string[]
+  rootPackage?: {
+    path: string
+  } | null
+}
+
+export function getPackagesFormFilePath(filePath: string) {
+  if (!fs.pathExistsSync(filePath)) {
+    console.error(`文件不存在:${filePath}`)
+  }
+  const content = fs.readJSONSync(filePath, 'utf-8')
+  const { dependencies = {}, devDependencies = {} } = content
+  return {
+    ...dependencies,
+    ...devDependencies,
+  }
+}
+
+export default function getDependencies(filePath: string, {
+  deps = [],
+  rootPackage = null,
+}: GetDependenciesOptions) {
   const code = fs.readFileSync(filePath, 'utf-8')
   const ast = parser.parse(code, {
     sourceType: 'module',
     plugins: ['jsx', 'typescript'],
   })
-
+  const rootPkg = rootPackage ? getPackagesFormFilePath(rootPackage.path) : {}
   const packageNames: string[] = []
-
+  packageNames.push(...deps)
   traverse(ast, {
     ImportDeclaration(path: any) {
       const source = path.node.source.value
-      packageNames.push(extractContentBasedOnConditions(source))
+      // obtain package name
+      const packName = extractContentBasedOnConditions(source)
+      // obtain version from root package
+      const version = rootPkg[packName] || false
+      packageNames.push(version ? `${packName}@${version}` : packName)
     },
     CallExpression(path: any) {
       if (
@@ -38,7 +64,10 @@ export default function getDependencies(filePath: string) {
         && path.node.arguments.length === 1
         && path.node.arguments[0].type === 'StringLiteral'
       ) {
-        packageNames.push(extractContentBasedOnConditions(path.node.arguments[0].value))
+        const packName = extractContentBasedOnConditions(path.node.arguments[0].value)
+        // obtain version from root package
+        const version = rootPkg[packName] || false
+        packageNames.push(version ? `${packName}@${version}` : packName)
       }
     },
   })
