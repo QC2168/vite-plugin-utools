@@ -14,7 +14,7 @@
 
 无需手动安装插件并配置插件选项，更简单更方便
 
-[utools-plugin-template]([utools-plugin-template](https://github.com/QC2168/utools-plugin-template))
+[点击前往 utools-plugin-template](https://github.com/QC2168/utools-plugin-template)
 
 ## 使用说明 📝
 
